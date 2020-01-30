@@ -1,0 +1,226 @@
+<% include partials/admin-menu.ejs %>
+
+        <div class="page-wrapper">
+            <!-- Container fluid  -->
+            <div class="container-fluid">
+                <!-- Start Page Content -->
+                <div class="row">
+                    <!-- Column -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title m-b-0">Manage User</h5>
+                            </div>
+                            <div class="border-top">
+                                <div class="card-body">
+                                    <button type="button" data-toggle="modal" data-target="#add-user" class="btn btn-success">Create</button>
+                                    <button type="button" data-toggle="modal" data-target="#delete-all-user" class="btn btn-danger">Delete all users</button>
+                                </div>
+                            </div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">User ID.</th>
+                                        <th scope="col">Username</th>
+                                        <th scope="col">User Class</th>
+                                        <th scope="col">E-mail</th>
+                                        <th scope="col">Update</th>
+                                        <th scope="col">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% accounts.forEach((accounts, index) => { %>
+                                        <tr>
+                                            <th scope="row"><%= accounts.id %></th>
+                                            <td><%= accounts.username %></td>
+                                            <td><% switch (accounts.user_class) {
+                                                    case 1 : %>
+                                                            Admin
+                                                            <% break;
+                                                    case 2 : %>
+                                                            Teacher
+                                                            <% break;
+                                                    case 3 : %>
+                                                            Student
+                                                            <% break;
+                                                } %>
+                                            </td>
+                                            <td><%= accounts.email %></td>
+                                            <!-- edit function -->
+                                            <td><button data-toggle="modal" data-target="#edit-user-id<%= accounts.id %>" class="btn btn-sm btn-primary btn-rounded">Edit</button>
+                                                <div class="modal fade none-border" id="edit-user-id<%= accounts.id %>">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title"><strong>Edit</strong> user</h4>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <form action="edit-user/<%= accounts.id %>" method="post">
+                                                                    <div class="row">
+                                                                        <div class="col-md-8">
+                                                                            <label class="control-label">Username</label>
+                                                                            <input class="form-control form-white" placeholder="Enter name" type="text" name="editusername" value="<%= accounts.username %>" required/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-8">
+                                                                            <label class="control-label">Password</label>
+                                                                            <input class="form-control form-white" placeholder="Enter password" type="password" id="edit-password<%= accounts.id %>" name="edit-password" value="<%= accounts.password %>" onkeyup="checkedit(<%= accounts.id %>);" required/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-8">
+                                                                            <label class="control-label">Confirm Password</label>
+                                                                            <input class="form-control form-white" placeholder="Enter password" type="password" id="edit-confirm-password<%= accounts.id %>" name="edit-confirm-password" value="<%= accounts.password %>" onkeyup="checkedit(<%= accounts.id %>);" required/>
+                                                                            <span id='editmessage'></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-8">
+                                                                            <label class="control-label">E-mail</label>
+                                                                            <input class="form-control form-white" placeholder="Enter e-mail" type="text" name="editemail" value="<%= accounts.email %>" required/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-8">
+                                                                            <label class="control-label">Choose User Class</label>
+                                                                            <select class="form-control form-white" data-placeholder="Choose user class.." name="edituserclass" value="<%= accounts.user_class %>">
+                                                                                <option value="1">Admin</option>
+                                                                                <option value="2">Teacher</option>
+                                                                                <option value="3">User</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br><button type="submit" name="submit" class="btn btn-primary waves-effect waves-light save-category">Edit User</button>
+                                                                </form>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancel</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <!-- end edit -->
+                                            <!-- delete function -->
+                                            <td><button data-toggle="modal" data-target="#id<%= accounts.id %>" class="btn btn-sm btn-danger btn-rounded">Delete</button>
+                                                <div id="id<%= accounts.id %>" class="modal fade none-border">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-body">
+                                                                <h1>Delete Account</h1>
+                                                                <p>Are you sure you want to delete this account?</p>
+                                                                <div class="clearfix">
+                                                                    <button type="button" class="btn btn-secondary btn-lg waves-effect" data-dismiss="modal">Cancel</button>
+                                                                    <a href="delete-user/<%= accounts.id %>" class="btn btn-danger btn-lg wave-effect">Delete</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <!-- end delete -->
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Add Category -->
+            <div class="modal fade none-border" id="add-user">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title"><strong>Add</strong> a new User</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="create-user" id="create-user-form" method="post">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label class="control-label">Username</label>
+                                        <input class="form-control form-white" placeholder="Enter name" type="text" name="username" required/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label class="control-label">Password</label>
+                                        <input class="form-control form-white" placeholder="Enter password" type="password" id="password" name="password" onkeyup="check();" required/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label class="control-label">Confirm Password</label>
+                                        <input class="form-control form-white" placeholder="Enter password" type="password" id="confirm-password" name="confirm-password" onkeyup="check();" required/>
+                                        <span id='message'></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label class="control-label">E-mail</label>
+                                        <input class="form-control form-white" placeholder="Enter e-mail" type="text" name="email" required/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label class="control-label">Choose User Class</label>
+                                        <select class="form-control form-white" data-placeholder="Choose user class.." name="userclass">
+                                            <option value="1">Admin</option>
+                                            <option value="2">Teacher</option>
+                                            <option value="3">User</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <br><button type="submit" name="submit" class="btn btn-success waves-effect waves-light save-category">Create User</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete all Modal -->
+            <div id="delete-all-user" class="modal fade none-border">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <h1>Delete All Accounts</h1>
+                            <p>Are you sure you want to delete all accounts?</p>
+                            <div class="clearfix">
+                                <button type="button" class="btn btn-secondary btn-lg waves-effect" data-dismiss="modal">Cancel</button>
+                                <a href="delete-all-user" class="btn btn-danger btn-lg wave-effect">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script type='text/javascript'>
+                var check = function () {
+                    if (document.getElementById('password').value == document.getElementById('confirm-password').value) {
+                        document.getElementById('message').style.color = 'green';
+                        document.getElementById('message').innerHTML = 'Correct';
+                    } else {
+                        document.getElementById('message').style.color = 'red';
+                        document.getElementById('message').innerHTML = 'Not correct';
+                    }
+                }
+
+                var checkedit = function (id) {
+                    if (document.getElementById('edit-password'+id).value == document.getElementById('edit-confirm-password'+id).value) {
+                        document.getElementById('editmessage').style.color = 'green';
+                        document.getElementById('editmessage').innerHTML = 'Correct';
+                    } else {
+                        document.getElementById('editmessage').style.color = 'red';
+                        document.getElementById('editmessage').innerHTML = 'Not correct';
+                    }
+                }
+            </script>
+
+<% include partials/footer.ejs %>    

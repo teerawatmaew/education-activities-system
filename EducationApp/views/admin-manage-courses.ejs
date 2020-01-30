@@ -1,0 +1,187 @@
+<% include partials/admin-menu.ejs %>
+        
+        <div class="page-wrapper">
+            <!-- Container fluid  -->
+            <div class="container-fluid">
+                <!-- Start Page Content -->
+                <div class="row">
+                    <!-- Column -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title m-b-0">Manage Course</h5>
+                            </div>
+                            <div class="border-top">
+                                <div class="card-body">
+                                    <button type="button" data-toggle="modal" data-target="#add-course" class="btn btn-success">Create</button>
+                                    <button type="button" data-toggle="modal" data-target="#delete-all-course" class="btn btn-danger">Delete all courses</button>
+                                </div>
+                            </div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Course ID.</th>
+                                        <th scope="col">Coursename</th>
+                                        <th scope="col">Supervisor</th>
+                                        <th scope="col">Start date</th>
+                                        <th scope="col">Place</th>
+                                        <th scope="col">Number participants</th>
+                                        <th scope="col">Update</th>
+                                        <th scope="col">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% courses.forEach((courses, index) => { %>
+                                        <tr>
+                                            <th scope="row"><%= courses.course_id %></th>
+                                            <td><%= courses.course_name %></td>
+                                            <td><%= courses.supervisor %></td>
+                                            <td><%= courses.start_date %></td>
+                                            <td><%= courses.place %></td>
+                                            <td><%= courses.number_participants %></td>
+                                            <!-- edit function -->
+                                            <td><button data-toggle="modal" data-target="#edit-course-id<%= courses.course_id %>" class="btn btn-sm btn-primary btn-rounded">Edit</button>
+                                                <div class="modal fade none-border" id="edit-course-id<%= courses.course_id %>">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title"><strong>Edit</strong> course</h4>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <form action="edit-course/<%= courses.course_id %>" method="post">
+                                                                    <div class="row">
+                                                                        <div class="col-md-8">
+                                                                            <label class="control-label">Course name</label>
+                                                                            <input class="form-control form-white" placeholder="Enter course name" type="text" name="edit-coursename" value="<%= courses.course_name %>" required/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-8">
+                                                                            <label class="control-label">Supervisor</label>
+                                                                            <input class="form-control form-white" placeholder="Enter supervisor" type="text" name="edit-supervisor" value="<%= courses.supervisor %>" required/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-8">
+                                                                            <label class="control-label">Start date</label>
+                                                                            <input class="form-control form-white" placeholder="Enter start date" type="text" name="edit-startdate" value="<%= courses.start_date %>" required/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-8">
+                                                                            <label class="control-label">Place</label>
+                                                                            <input class="form-control form-white" placeholder="Enter place" type="text" name="edit-place" value="<%= courses.place %>" required/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-8">
+                                                                            <label class="control-label">Enter number participants</label>
+                                                                            <input class="form-control form-white" placeholder="Enter number participants" type="text" name="edit-numberparticipants" value="<%= courses.number_participants %>" required/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br><button type="submit" name="submit" class="btn btn-primary waves-effect waves-light save-category">Edit User</button>
+                                                                </form>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancel</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <!-- end edit -->
+                                            <!-- delete function -->
+                                            <td><button data-toggle="modal" data-target="#course-id<%= courses.course_id %>" class="btn btn-sm btn-danger btn-rounded">Delete</button>
+                                                <div id="course-id<%= courses.course_id %>" class="modal fade none-border">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-body">
+                                                                <h1>Delete Course</h1>
+                                                                <p>Are you sure you want to delete this course?</p>
+                                                                <div class="clearfix">
+                                                                    <button type="button" class="btn btn-secondary btn-lg waves-effect" data-dismiss="modal">Cancel</button>
+                                                                    <a href="delete-course/<%= courses.course_id %>" class="btn btn-danger btn-lg wave-effect">Delete</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <!-- end delete -->
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Add Category -->
+            <div class="modal fade none-border" id="add-course">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title"><strong>Add</strong> a new Course</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="create-user" id="create-user-form" method="post">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label class="control-label">Course name</label>
+                                        <input class="form-control form-white" placeholder="Enter course name" type="text" name="coursename" required/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label class="control-label">Supervisor</label>
+                                        <input class="form-control form-white" placeholder="Enter supervisor" type="text" name="supervisor" required/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label class="control-label">Start date</label>
+                                        <input class="form-control form-white" placeholder="Enter start date" type="text" name="startdate" required/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label class="control-label">Place</label>
+                                        <input class="form-control form-white" placeholder="Enter place" type="text" name="place" required/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label class="control-label">Enter number participants</label>
+                                        <input class="form-control form-white" placeholder="Enter number participants" type="text" name="numberparticipants" required/>
+                                    </div>
+                                </div>
+                                <br><button type="submit" name="submit" class="btn btn-primary waves-effect waves-light save-category">Edit User</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete all Modal -->
+            <div id="delete-all-course" class="modal fade none-border">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <h1>Delete All Courses</h1>
+                            <p>Are you sure you want to delete all courses?</p>
+                            <div class="clearfix">
+                                <button type="button" class="btn btn-secondary btn-lg waves-effect" data-dismiss="modal">Cancel</button>
+                                <a href="delete-all-user" class="btn btn-danger btn-lg wave-effect">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<% include partials/footer.ejs %>

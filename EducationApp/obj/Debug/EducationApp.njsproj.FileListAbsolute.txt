@@ -1,0 +1,2 @@
+C:\My Project\EducationApp\EducationApp\obj\Debug\EducationApp.njsprojAssemblyReference.cache
+C:\My Project\EducationApp\EducationApp\bin\Microsoft.NodejsTools.WebRole.dll
