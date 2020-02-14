@@ -47,11 +47,11 @@ fs.readdirSync('api').forEach(function (file) {
 //<===================>
 
 app.get('/', function (request, response) {
-    response.render('firstpage.html');
+    response.render('firstpage.ejs');
 });
 
 app.get('/logout', function (request, response) {
-    response.render('firstpage.html');
+    response.render('firstpage.ejs');
 });
 
 /*
