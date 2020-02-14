@@ -11,15 +11,13 @@ var connection = mysql.createConnection({
 module.exports = {
     addCourse: (request, response) => {
         var coursename = request.body.coursename;
-        var supervisor = request.body.supervisor;
-        var startdate = request.body.startdate;
-        var place = request.body.place;
-        var numberparticipants = request.body.numberparticipants;
-        connection.query('SELECT * FROM courses WHERE username = ?', [coursename], function (error, results, fields) {
+        var category = request.body.category;
+        var credit = request.body.credit;
+        connection.query('SELECT * FROM courses WHERE course_name = ?', [coursename], function (error, results, fields) {
             if (results.length > 0) {
                 response.redirect('admin-manage-courses.ejs');
             } else {
-                connection.query('INSERT INTO courses(course_name, supervisor, start_date, place, number_participants) VALUES(?,?,?,?,?)', [coursename, supervisor, startdate, place, numberparticipants], (err, result) => {
+                connection.query('INSERT INTO courses(course_name, category, credit) VALUES(?,?,?)', [coursename, category, credit], (err, result) => {
                     if (err) {
                         throw err;
                     } else {
@@ -32,16 +30,14 @@ module.exports = {
 
     editCourse: (request, response) => {
         var courseid = request.params.id;
-        var coursename = request.body.edit - coursename;
-        var supervisor = request.body.edit - supervisor;
-        var startdate = request.body.edit - startdate;
-        var place = request.body.edit - place;
-        var numberparticipants = request.body.edit - numberparticipants
-        connection.query('SELECT * FROM courses WHERE username = ?', [username], function (error, results, fields) {
-            if (results.length > 0) {
+        var coursename = request.body.edit-coursename;
+        var category = request.body.edit-category;
+        var credit = request.body.edit-credit;
+        connection.query('SELECT * FROM courses WHERE course_id = ?', [courseid], function (error, results, fields) {
+            if (results.length > 1) {
                 response.redirect('../admin-manage-courses.ejs');
             } else {
-                connection.query('UPDATE courses SET course_name=?, supervisor=?, start_date=?, place=?, number_participants=? WHERE id=?', [coursename, supervisor, startdate, place, numberparticipants, id], (err, result) => {
+                connection.query('UPDATE courses SET course_name=?, category=?, credit=? WHERE course_id=?', [coursename, category, credit, courseid], (err, result) => {
                     if (err) {
                         throw err;
                     } else {

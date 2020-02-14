@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html dir="ltr" lang="en">
 
 <head>
@@ -26,7 +26,7 @@
             <nav class="navbar top-navbar navbar-expand-md navbar-dark">
                 <div class="navbar-header" data-logobg="skin5">
                     <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i class="ti-menu ti-close"></i></a>
-                    <a class="navbar-brand" href="index.html">
+                    <a class="navbar-brand" href="admin-homepage.ejs">
                         <b class="logo-icon p-l-10">
                             <img src="../../assets/images/logo-icon.png" alt="homepage" class="light-logo" />
                         </b>
@@ -53,13 +53,13 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="../../assets/images/users/1.jpg" alt="user" class="rounded-circle" width="31"></a>
                             <div class="dropdown-menu dropdown-menu-right user-dd animated">
-                                <a class="dropdown-item" href="admin-profile.html"><i class="ti-user m-r-5 m-l-5"></i> Admin Profile</a>
+                                <a class="dropdown-item" href="admin-profile.ejs"><i class="ti-user m-r-5 m-l-5"></i> Admin Profile</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="javascript:void(0)"><i class="ti-settings m-r-5 m-l-5"></i> Account Setting</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="javascript:void(0)"><i class="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
+                                <a class="dropdown-item" href="logout"><i class="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
                                 <div class="dropdown-divider"></div>
-                                <div class="p-l-30 p-10"><a href="admin-profile.html" class="btn btn-sm btn-success btn-rounded">View Profile</a></div>
+                                <div class="p-l-30 p-10"><a href="admin-profile.ejs" class="btn btn-sm btn-success btn-rounded">View Profile</a></div>
                             </div>
                         </li>
                         <!-- User profile and search -->
@@ -76,9 +76,10 @@
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav" class="p-t-30">
-                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="index.html" aria-expanded="false"><i class="mdi mdi-view-dashboard"></i><span class="hide-menu">Dashboard</span></a></li>
-                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="admin-manage-course.html" aria-expanded="false"><i class="mdi mdi-note-multiple"></i><span class="hide-menu">Manage Course</span></a></li>
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="admin-homepage.ejs" aria-expanded="false"><i class="mdi mdi-view-dashboard"></i><span class="hide-menu">Dashboard</span></a></li>
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="admin-manage-courses.ejs" aria-expanded="false"><i class="mdi mdi-note-multiple"></i><span class="hide-menu">Manage Course</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="admin-manage-users.ejs" aria-expanded="false"><i class="mdi mdi-account-multiple"></i><span class="hide-menu">Manage User</span></a></li>
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="logout" aria-expanded="false"><i class="mdi mdi-logout"></i><span class="hide-menu">Log Out</span></a></li>
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->
@@ -86,42 +87,3 @@
             <!-- End Sidebar scroll-->
         </aside>
         <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <!-- Page wrapper  -->
-        <div class="page-wrapper">
-            <!-- Container fluid  -->
-            <div class="container-fluid">
-                <!-- Start Page Content -->
-                <div class="row">
-                    <!-- Column -->
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Dashboard</h5>
-                                <p>Hello world!</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <footer class="footer text-center">
-                All Rights Reserved by Matrix-admin. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
-            </footer>
-        </div>
-    </div>
-    <script src="../../assets/libs/jquery/dist/jquery.min.js"></script>
-    <script src="../../dist/js/jquery.ui.touch-punch-improved.js"></script>
-    <script src="../../dist/js/jquery-ui.min.js"></script>
-    <script src="../../assets/libs/popper.js/dist/umd/popper.min.js"></script>
-    <script src="../../assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="../../assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-    <script src="../../assets/extra-libs/sparkline/sparkline.js"></script>
-    <script src="../../dist/js/waves.js"></script>
-    <script src="../../dist/js/sidebarmenu.js"></script>
-    <script src="../../dist/js/custom.min.js"></script>
-    <script src="../../assets/libs/moment/min/moment.min.js"></script>
-    <script src="../../assets/libs/fullcalendar/dist/fullcalendar.min.js"></script>
-    <script src="../../dist/js/pages/calendar/cal-init.js"></script>
-
-</body>
-</html>

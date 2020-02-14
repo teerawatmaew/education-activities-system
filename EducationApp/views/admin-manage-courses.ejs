@@ -22,10 +22,8 @@
                                     <tr>
                                         <th scope="col">Course ID.</th>
                                         <th scope="col">Coursename</th>
-                                        <th scope="col">Supervisor</th>
-                                        <th scope="col">Start date</th>
-                                        <th scope="col">Place</th>
-                                        <th scope="col">Number participants</th>
+                                        <th scope="col">Category</th>
+                                        <th scope="col">Credit</th>
                                         <th scope="col">Update</th>
                                         <th scope="col">Delete</th>
                                     </tr>
@@ -35,10 +33,8 @@
                                         <tr>
                                             <th scope="row"><%= courses.course_id %></th>
                                             <td><%= courses.course_name %></td>
-                                            <td><%= courses.supervisor %></td>
-                                            <td><%= courses.start_date %></td>
-                                            <td><%= courses.place %></td>
-                                            <td><%= courses.number_participants %></td>
+                                            <td><%= courses.category %></td>
+                                            <td><%= courses.credit %></td>
                                             <!-- edit function -->
                                             <td><button data-toggle="modal" data-target="#edit-course-id<%= courses.course_id %>" class="btn btn-sm btn-primary btn-rounded">Edit</button>
                                                 <div class="modal fade none-border" id="edit-course-id<%= courses.course_id %>">
@@ -58,26 +54,14 @@
                                                                     </div>
                                                                     <div class="row">
                                                                         <div class="col-md-8">
-                                                                            <label class="control-label">Supervisor</label>
-                                                                            <input class="form-control form-white" placeholder="Enter supervisor" type="text" name="edit-supervisor" value="<%= courses.supervisor %>" required/>
+                                                                            <label class="control-label">Category</label>
+                                                                            <input class="form-control form-white" placeholder="Enter category" type="text" name="edit-category" value="<%= courses.category %>" required/>
                                                                         </div>
                                                                     </div>
                                                                     <div class="row">
                                                                         <div class="col-md-8">
-                                                                            <label class="control-label">Start date</label>
-                                                                            <input class="form-control form-white" placeholder="Enter start date" type="text" name="edit-startdate" value="<%= courses.start_date %>" required/>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row">
-                                                                        <div class="col-md-8">
-                                                                            <label class="control-label">Place</label>
-                                                                            <input class="form-control form-white" placeholder="Enter place" type="text" name="edit-place" value="<%= courses.place %>" required/>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row">
-                                                                        <div class="col-md-8">
-                                                                            <label class="control-label">Enter number participants</label>
-                                                                            <input class="form-control form-white" placeholder="Enter number participants" type="text" name="edit-numberparticipants" value="<%= courses.number_participants %>" required/>
+                                                                            <label class="control-label">Credit</label>
+                                                                            <input class="form-control form-white" placeholder="Enter credit" type="text" name="edit-credit" value="<%= courses.credit %>" required/>
                                                                         </div>
                                                                     </div>
                                                                     <br><button type="submit" name="submit" class="btn btn-primary waves-effect waves-light save-category">Edit User</button>
@@ -127,7 +111,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         </div>
                         <div class="modal-body">
-                            <form action="create-user" id="create-user-form" method="post">
+                            <form action="create-course" id="create-course-form" method="post">
                                 <div class="row">
                                     <div class="col-md-8">
                                         <label class="control-label">Course name</label>
@@ -136,29 +120,17 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-8">
-                                        <label class="control-label">Supervisor</label>
-                                        <input class="form-control form-white" placeholder="Enter supervisor" type="text" name="supervisor" required/>
+                                        <label class="control-label">Category</label>
+                                        <input class="form-control form-white" placeholder="Enter category" type="text" name="category" required/>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-8">
-                                        <label class="control-label">Start date</label>
-                                        <input class="form-control form-white" placeholder="Enter start date" type="text" name="startdate" required/>
+                                        <label class="control-label">Credit</label>
+                                        <input class="form-control form-white" placeholder="Enter credit" type="text" name="credit" required/>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <label class="control-label">Place</label>
-                                        <input class="form-control form-white" placeholder="Enter place" type="text" name="place" required/>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <label class="control-label">Enter number participants</label>
-                                        <input class="form-control form-white" placeholder="Enter number participants" type="text" name="numberparticipants" required/>
-                                    </div>
-                                </div>
-                                <br><button type="submit" name="submit" class="btn btn-primary waves-effect waves-light save-category">Edit User</button>
+                                <br><button type="submit" name="submit" class="btn btn-primary waves-effect waves-light save-category">Create Course</button>
                             </form>
                         </div>
                         <div class="modal-footer">
@@ -177,7 +149,7 @@
                             <p>Are you sure you want to delete all courses?</p>
                             <div class="clearfix">
                                 <button type="button" class="btn btn-secondary btn-lg waves-effect" data-dismiss="modal">Cancel</button>
-                                <a href="delete-all-user" class="btn btn-danger btn-lg wave-effect">Delete</a>
+                                <a href="delete-all-course" class="btn btn-danger btn-lg wave-effect">Delete</a>
                             </div>
                         </div>
                     </div>

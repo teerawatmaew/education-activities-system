@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 var path = require('path');
 
 var app = express();
-var router = express.Router();
 
 var accounts;
 var courses;
@@ -48,9 +47,18 @@ fs.readdirSync('api').forEach(function (file) {
 //<===================>
 
 app.get('/', function (request, response) {
-    response.render('admin-homepage.ejs');
+    response.render('firstpage.html');
 });
 
+app.get('/logout', function (request, response) {
+    response.render('firstpage.html');
+});
+
+/*
+app.get('/', function (request, response) {
+    response.render('admin-homepage.ejs');
+});
+*/
 
 //<===================>
 //<====== login ======>
@@ -64,7 +72,12 @@ app.post('/auth', function (request, response) {
             if (results.length > 0) {
                 request.session.loggedin = true;
                 request.session.username = username;
-                response.redirect('/index2.html');
+                if (results[0].user_class == 1) {
+                    response.render('admin-homepage.ejs');
+                }
+                else {
+                    response.redirect('index2.html');
+                }
             } else {
                 response.send('Incorrect Username and/or Password!');
             }
@@ -102,6 +115,9 @@ app.get('/completed-courses.html', function (request, response) {
 //<====== admin site ======>
 //<========================>
 
+app.get('/admin-homepage.ejs', function (request, response) {
+    response.render('admin-homepage.ejs');
+});
 
 const { addUser, editUser, deleteUser, deleteAllUser } = require('./routes/user');
 app.post('/create-user', addUser);
@@ -127,73 +143,6 @@ app.get('/admin-manage-courses.ejs', function (request, response) {
         }
     });
 });
-/*
-app.post('/create-course', function (request, response) {
-    var coursename = request.body.coursename;
-    var supervisor = request.body.supervisor;
-    var startdate = request.body.startdate;
-    var place = request.body.place;
-    var numberparticipants = request.body.numberparticipants;
-    connection.query('SELECT * FROM courses WHERE username = ?', [coursename], function (error, results, fields) {
-        if (results.length > 0) {
-            response.redirect('admin-manage-courses.ejs');
-        } else {
-            connection.query('INSERT INTO courses(course_name, supervisor, start_date, place, number_participants) VALUES(?,?,?,?,?)', [coursename, supervisor, startdate, place, numberparticipants], (err, result) => {
-                if (err) {
-                    throw err;
-                } else {
-                    response.redirect('admin-manage-courses.ejs');
-                }
-            });
-        }
-    });
-});
-
-app.post('/edit-course/(:id)', function (request, response) {
-    var courseid = request.params.id;
-    var coursename = request.body.edit-coursename;
-    var supervisor = request.body.edit-supervisor;
-    var startdate = request.body.edit-startdate;
-    var place = request.body.edit-place;
-    var numberparticipants = request.body.edit-numberparticipants
-    connection.query('SELECT * FROM courses WHERE username = ?', [username], function (error, results, fields) {
-        if (results.length > 0) {
-            response.redirect('../admin-manage-courses.ejs');
-        } else {
-            connection.query('UPDATE courses SET course_name=?, supervisor=?, start_date=?, place=?, number_participants=? WHERE id=?', [coursename, supervisor, startdate, place, numberparticipants, id], (err, result) => {
-                if (err) {
-                    throw err;
-                } else {
-                    response.redirect('../admin-manage-courses.ejs');
-                }
-            });
-        }
-    });
-});
-
-app.get('/delete-course/(:id)', function (request, response, next) {
-    var courseid = request.params.id;
-    connection.query('DELETE FROM courses WHERE course_id = ?', [courseid], function (err, result) {
-        if (err) {
-            throw err;
-        } else {
-            response.redirect('../admin-manage-courses.ejs');
-        }
-    });
-});
-
-app.delete('/delete-all-course', function (request, response, next) {
-    connection.query('DELETE * FROM courses', function (err, result) {
-        if (err) {
-            response.redirect('admin-manage-courses.ejs')
-        }
-        else {
-            request.flash('success', 'All courses deleted successfully!')
-            response.redirect('admin-manage-courses.ejs')
-        }
-    });
-});
-*/
 
 app.get('/admin-manage-users.ejs', function (request, response) {
     connection.query('SELECT * FROM accounts', (err, results) => {
@@ -218,73 +167,6 @@ app.get('/admin-profile.ejs', function (request, response) {
         }
     });
 });
-
-/*
-app.post('/create-user', function (request, response) {
-    var username = request.body.username;
-    var password = request.body.password;
-    var email = request.body.email;
-    var userclass = request.body.userclass;
-    connection.query('SELECT * FROM accounts WHERE username = ? OR email = ?', [username, email], function (error, results, fields) {
-        if (results.length > 0) {
-            response.redirect('admin-manage-users.ejs');
-        } else {
-            connection.query('INSERT INTO accounts(username, password, user_class, email) VALUES(?,?,?,?)', [username, password, userclass, email], (err, result) => {
-                if (err) {
-                    throw err;
-                } else {
-                    response.redirect('admin-manage-users.ejs');
-                }
-            });
-        }
-    });
-});
-
-app.post('/edit-user/(:id)', function (request, response) {
-    var id = request.params.id;
-    var username = request.body.editusername;
-    var password = request.body.editpassword;
-    var email = request.body.editemail;
-    var userclass = request.body.edituserclass;
-    console.log("outside check"+id);
-    connection.query('SELECT * FROM accounts WHERE username = ? OR email = ?', [username, email], function (error, results, fields) {
-        if (results.length > 0) {
-            response.redirect('../admin-manage-users.ejs');
-        } else {
-            connection.query('UPDATE accounts SET username=?, password=?, user_class=?, email=? WHERE id=?', [username, password, userclass, email, id], (err, result) => {
-                if (err) {
-                    throw err;
-                } else {
-                    response.redirect('../admin-manage-users.ejs');
-                }
-            });
-        }
-    });
-});
-
-app.get('/delete-user/(:id)', function (request, response, next) {
-    var user = { id: request.params.id }
-    connection.query('DELETE FROM accounts WHERE id = ' + request.params.id, user, function (err, result) {
-        if (err) {
-            throw err;
-        } else {
-            response.redirect('../admin-manage-users.ejs');
-        }
-    });
-});
-
-app.delete('/delete-all-user', function (request, response, next) {
-    connection.query('DELETE * FROM accounts', function (err, result) {
-        if (err) {
-            response.redirect('admin-manage-users.ejs')
-        }
-        else {
-            request.flash('success', 'All user deleted successfully!')
-            response.redirect('admin-manage-users.ejs')
-        }
-    });
-});
-*/
 
 //<========================>
 //<===== example site =====>

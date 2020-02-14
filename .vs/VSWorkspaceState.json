@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\EducationApp",
+    "\\EducationApp\\api",
+    "\\EducationApp\\matrix",
+    "\\EducationApp\\matrix\\html",
+    "\\EducationApp\\matrix\\html\\ltr",
+    "\\EducationApp\\routes",
+    "\\EducationApp\\views",
+    "\\EducationApp\\views\\partials"
+  ],
+  "SelectedNode": "\\EducationApp\\routes\\course.js",
+  "PreviewInSolutionExplorer": false
+}

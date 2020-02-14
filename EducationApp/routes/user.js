@@ -35,9 +35,8 @@ module.exports = {
         var password = request.body.editpassword;
         var email = request.body.editemail;
         var userclass = request.body.edituserclass;
-        console.log("outside check" + id);
         connection.query('SELECT * FROM accounts WHERE username = ? OR email = ?', [username, email], function (error, results, fields) {
-            if (results.length > 0) {
+            if (results.length > 1) {
                 response.redirect('../admin-manage-users.ejs');
             } else {
                 connection.query('UPDATE accounts SET username=?, password=?, user_class=?, email=? WHERE id=?', [username, password, userclass, email, id], (err, result) => {
