@@ -30,9 +30,9 @@ module.exports = {
 
     editCourse: (request, response) => {
         var courseid = request.params.id;
-        var coursename = request.body.edit-coursename;
-        var category = request.body.edit-category;
-        var credit = request.body.edit-credit;
+        var coursename = request.body.editcoursename;
+        var category = request.body.editcategory;
+        var credit = request.body.editcredit;
         connection.query('SELECT * FROM courses WHERE course_id = ?', [courseid], function (error, results, fields) {
             if (results.length > 1) {
                 response.redirect('../admin-manage-courses.ejs');
