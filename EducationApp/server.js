@@ -18,6 +18,15 @@ var connection = mysql.createConnection({
     database: 'nodelogin'
 });
 
+const middleware = (req, res, next) => {
+    if (req.headers.authorization === "Admin") {
+        next();
+    }
+    else {
+        res.send("Permission Denied");
+    }
+}; 
+
 app.use(session({
     secret: 'secret',
     resave: true,
@@ -50,8 +59,55 @@ app.get('/', function (request, response) {
     response.render('firstpage.ejs');
 });
 
+app.get('/user', function (request, response) {
+    connection.query('SELECT * FROM accounts', (err, results) => {
+        if (err) {
+            throw err;
+        }
+        else {
+            response.json(results);
+        }
+    });
+});
+
+app.get('/user/(:id)', function (request, response) {
+    connection.query('SELECT * FROM accounts WHERE id = ' + request.params.id, function (err, result) {
+        if (err) {
+            throw err;
+        } else {
+            response.json(result);
+        }
+    });
+});
+
+app.get('/course', function (request, response) {
+    connection.query('SELECT * FROM courses', (err, results) => {
+        if (err) {
+            throw err;
+        }
+        else {
+            response.json(results);
+        }
+    });
+});
+
+app.get('/course/:id', function (request, response) {
+    connection.query('SELECT * FROM courses WHERE course_id = ' + request.params.id, function (err, result) {
+        if (err) {
+            throw err;
+        } else {
+            response.json(result);
+        }
+    });
+});
+
 app.get('/logout', function (request, response) {
-    response.render('firstpage.ejs');
+    request.session.destroy((err) => {
+        if (err) {
+            return console.log(err);
+        }
+        response.redirect('/');
+    });
 });
 
 /*
@@ -70,8 +126,16 @@ app.post('/auth', function (request, response) {
     if (username && password) {
         connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function (error, results, fields) {
             if (results.length > 0) {
-                request.session.loggedin = true;
-                request.session.username = username;
+                let sess = request.session;
+                sess.id = results[0].id;
+                sess.username = results[0].username;
+                sess.email = results[0].email;
+                sess.userclass = results[0].user_class;
+                //request.session.loggedin = true;
+                //request.session.id = results[0].id;
+                //request.session.username = username;
+                //request.session.userclass = results[0].user_class;
+                
                 if (results[0].user_class == 1) {
                     response.render('admin-homepage.ejs');
                 }
@@ -88,6 +152,12 @@ app.post('/auth', function (request, response) {
         response.end();
     }
 });
+
+app.get('/session', (request, response) => {
+    let sess = request.session
+    console.log(sess)
+    response.status(200).send('email = ' + sess.email + '  ' + '_id = ' + sess.id)
+})
 
 
 //<========================>
