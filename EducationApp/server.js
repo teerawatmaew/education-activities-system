@@ -5,11 +5,9 @@ var express = require('express');
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var path = require('path');
+const jwt = require("jwt-simple");
 
 var app = express();
-
-var accounts;
-var courses;
 
 var connection = mysql.createConnection({
     host: 'localhost',
@@ -17,15 +15,6 @@ var connection = mysql.createConnection({
     password: '',
     database: 'nodelogin'
 });
-
-const middleware = (req, res, next) => {
-    if (req.headers.authorization === "Admin") {
-        next();
-    }
-    else {
-        res.send("Permission Denied");
-    }
-}; 
 
 app.use(session({
     secret: 'secret',
@@ -50,7 +39,6 @@ fs.readdirSync('api').forEach(function (file) {
     require('./api/' + routeName)(app);
 });
 
-
 //<===================>
 //<====== index ======>
 //<===================>
@@ -58,6 +46,56 @@ fs.readdirSync('api').forEach(function (file) {
 app.get('/', function (request, response) {
     response.render('firstpage.ejs');
 });
+
+/*
+app.get('/', function (request, response) {
+    response.render('admin-homepage.ejs');
+});
+*/
+
+
+//<===================>
+//<====== login ======>
+//<===================>
+
+const loginMiddleware = (request, response, next) => {
+    var username = request.body.username;
+    var password = request.body.password;
+    connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function (error, results, fields) {
+        if (results.length > 0) {
+            next();
+        }
+        else {
+            response.send("Invalid Username or Password");
+        }
+    });
+}
+
+app.post('/login', loginMiddleware, function (request, response) {
+    var username = request.body.username;
+    var password = request.body.password;
+    connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function (error, results, fields) {
+        if (results.length > 0) {
+            if (results[0].user_class == 1) {
+                response.render('admin-homepage.ejs');
+            }
+            else {
+                response.redirect('index2.html');
+            }
+        } else {
+            response.send('Incorrect Username and/or Password!');
+        }
+        response.end();
+    });
+});
+
+app.get('/logout', function (request, response) {
+    response.redirect('/');
+});
+
+//<=====================>
+//<====== api get ======>
+//<=====================>
 
 app.get('/user', function (request, response) {
     connection.query('SELECT * FROM accounts', (err, results) => {
@@ -69,6 +107,7 @@ app.get('/user', function (request, response) {
         }
     });
 });
+
 
 app.get('/user/(:id)', function (request, response) {
     connection.query('SELECT * FROM accounts WHERE id = ' + request.params.id, function (err, result) {
@@ -100,65 +139,6 @@ app.get('/course/:id', function (request, response) {
         }
     });
 });
-
-app.get('/logout', function (request, response) {
-    request.session.destroy((err) => {
-        if (err) {
-            return console.log(err);
-        }
-        response.redirect('/');
-    });
-});
-
-/*
-app.get('/', function (request, response) {
-    response.render('admin-homepage.ejs');
-});
-*/
-
-//<===================>
-//<====== login ======>
-//<===================>
-
-app.post('/auth', function (request, response) {
-    var username = request.body.username;
-    var password = request.body.password;
-    if (username && password) {
-        connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function (error, results, fields) {
-            if (results.length > 0) {
-                let sess = request.session;
-                sess.id = results[0].id;
-                sess.username = results[0].username;
-                sess.email = results[0].email;
-                sess.userclass = results[0].user_class;
-                //request.session.loggedin = true;
-                //request.session.id = results[0].id;
-                //request.session.username = username;
-                //request.session.userclass = results[0].user_class;
-                
-                if (results[0].user_class == 1) {
-                    response.render('admin-homepage.ejs');
-                }
-                else {
-                    response.redirect('index2.html');
-                }
-            } else {
-                response.send('Incorrect Username and/or Password!');
-            }
-            response.end();
-        });
-    } else {
-        response.send('Please enter Username and Password!');
-        response.end();
-    }
-});
-
-app.get('/session', (request, response) => {
-    let sess = request.session
-    console.log(sess)
-    response.status(200).send('email = ' + sess.email + '  ' + '_id = ' + sess.id)
-})
-
 
 //<========================>
 //<====== user site =======>
@@ -208,7 +188,7 @@ app.get('/admin-manage-courses.ejs', function (request, response) {
             throw err;
         }
         else {
-            courses = results;
+            var courses = results;
             response.render('admin-manage-courses.ejs', { courses: courses });
         }
     });
@@ -220,7 +200,7 @@ app.get('/admin-manage-users.ejs', function (request, response) {
             throw err;
         }
         else {
-            accounts = results;
+            var accounts = results;
             response.render('admin-manage-users.ejs', {accounts:accounts});
         }
     });
@@ -232,7 +212,7 @@ app.get('/admin-profile.ejs', function (request, response) {
             throw err;
         }
         else {
-            accounts = results;
+            var accounts = results;
             response.render('admin-profile.ejs', { accounts: accounts });
         }
     });
