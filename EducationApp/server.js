@@ -72,26 +72,18 @@ app.post('/login', loginMiddleware, function (request, response) {
         if (results.length > 0) {
             const user = { name: username };
             if (results[0].user_class == 1) {
-                /*const payload = {
-                    sub: results[0].username,
-                    class: "Admin",
-                    iat: new Date().getTime()
-                };
-                const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);*/
-                const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-                response.json({ accessToken: accessToken });
-                response.render('admin-homepage.ejs');
+                const accessToken = generateAccessToken(user);
+                const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
+                refreshTokens.push(refreshToken);
+                response.json({ accessToken: accessToken, refreshToken: refreshToken });
+                //response.render('admin-homepage.ejs');
             }
             else {
-                /*const payload = {
-                    sub: results[0].username,
-                    class: "User",
-                    iat: new Date().getTime()
-                };
-                const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);*/
-                const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-                response.json({ accessToken: accessToken });
-                response.redirect('index2.html');
+                const accessToken = generateAccessToken(user);
+                const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
+                refreshTokens.push(refreshToken);
+                response.json({ accessToken: accessToken, refreshToken: refreshToken });
+                //response.redirect('index2.html');
             }
         } else {
             response.send('Incorrect Username and/or Password!');
@@ -100,11 +92,23 @@ app.post('/login', loginMiddleware, function (request, response) {
     });
 });
 
+let refreshTokens = [];
+
 app.get('/posts', authenticateToken, function (request, response){
     connection.query('SELECT * FROM accounts WHERE username = ?', [request.user.name], function (error, results, fields) {
         if (results.length > 0) response.status(200).json(results);
-        response.sendStatus(404);
     });
+})
+
+app.post('/token', (request, response) => {
+    const refreshToken = request.body.token;
+    if (refreshToken == null) return response.sendStatus(401);
+    if (!refreshTokens.includes(refreshToken)) return response.sendStatus(403);
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) return response.sendStatus(403);
+        const accessToken = generateAccessToken({ name: user.name });
+        response.json({ accessToken: accessToken });
+    })
 })
 
 function authenticateToken(request, response, next) {
@@ -117,6 +121,10 @@ function authenticateToken(request, response, next) {
         request.user = user;
         next();
     });
+}
+
+function generateAccessToken(user) {
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
 }
 
 app.get('/logout', function (request, response) {
