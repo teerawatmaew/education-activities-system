@@ -1,11 +1,12 @@
+require("dotenv").config();
+
 process.env.PWD = process.cwd()
 
 var mysql = require('mysql');
 var express = require('express');
-var session = require('express-session');
 var bodyParser = require('body-parser');
 var path = require('path');
-const jwt = require("jwt-simple");
+const jwt = require("jsonwebtoken");
 
 var app = express();
 
@@ -15,13 +16,6 @@ var connection = mysql.createConnection({
     password: '',
     database: 'nodelogin'
 });
-
-app.use(session({
-    secret: 'secret',
-    resave: true,
-    saveUninitialized: true,
-    cookie: { maxAge: 60000 }
-}));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -76,10 +70,27 @@ app.post('/login', loginMiddleware, function (request, response) {
     var password = request.body.password;
     connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function (error, results, fields) {
         if (results.length > 0) {
+            const user = { name: username };
             if (results[0].user_class == 1) {
+                /*const payload = {
+                    sub: results[0].username,
+                    class: "Admin",
+                    iat: new Date().getTime()
+                };
+                const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);*/
+                const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+                response.json({ accessToken: accessToken });
                 response.render('admin-homepage.ejs');
             }
             else {
+                /*const payload = {
+                    sub: results[0].username,
+                    class: "User",
+                    iat: new Date().getTime()
+                };
+                const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);*/
+                const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+                response.json({ accessToken: accessToken });
                 response.redirect('index2.html');
             }
         } else {
@@ -88,6 +99,25 @@ app.post('/login', loginMiddleware, function (request, response) {
         response.end();
     });
 });
+
+app.get('/posts', authenticateToken, function (request, response){
+    connection.query('SELECT * FROM accounts WHERE username = ?', [request.user.name], function (error, results, fields) {
+        if (results.length > 0) response.status(200).json(results);
+        response.sendStatus(404);
+    });
+})
+
+function authenticateToken(request, response, next) {
+    const authHeader = request.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (token == null) return response.senStatus(401);
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return response.sendStatus(403);
+        request.user = user;
+        next();
+    });
+}
 
 app.get('/logout', function (request, response) {
     response.redirect('/');
@@ -101,9 +131,10 @@ app.get('/user', function (request, response) {
     connection.query('SELECT * FROM accounts', (err, results) => {
         if (err) {
             throw err;
+            response.status(404);
         }
         else {
-            response.json(results);
+            response.status(200).json(results);
         }
     });
 });
@@ -113,8 +144,9 @@ app.get('/user/(:id)', function (request, response) {
     connection.query('SELECT * FROM accounts WHERE id = ' + request.params.id, function (err, result) {
         if (err) {
             throw err;
+            response.status(404);
         } else {
-            response.json(result);
+            response.status(200).json(result);
         }
     });
 });
@@ -123,9 +155,10 @@ app.get('/course', function (request, response) {
     connection.query('SELECT * FROM courses', (err, results) => {
         if (err) {
             throw err;
+            response.status(404);
         }
         else {
-            response.json(results);
+            response.status(200).json(results);
         }
     });
 });
@@ -134,32 +167,12 @@ app.get('/course/:id', function (request, response) {
     connection.query('SELECT * FROM courses WHERE course_id = ' + request.params.id, function (err, result) {
         if (err) {
             throw err;
+            response.status(404);
         } else {
-            response.json(result);
+            response.status(200).json(result);
         }
     });
 });
-
-//<========================>
-//<====== user site =======>
-//<========================>
-
-app.get('/profile.html', function (request, response) {
-    response.sendFile(path.join(__dirname + '/views/profile.html'));
-});
-
-app.get('/recent-course.html', function (request, response) {
-    response.sendFile(path.join(__dirname + '/views/recent-course.html'));
-});
-
-app.get('/inactive-courses.html', function (request, response) {
-    response.sendFile(path.join(__dirname + '/views/inactive-courses.html'));
-});
-
-app.get('/completed-courses.html', function (request, response) {
-    response.sendFile(path.join(__dirname + '/views/completed-courses.html'));
-});
-
 
 //<========================>
 //<====== admin site ======>
@@ -201,7 +214,7 @@ app.get('/admin-manage-users.ejs', function (request, response) {
         }
         else {
             var accounts = results;
-            response.render('admin-manage-users.ejs', {accounts:accounts});
+            response.render('admin-manage-users.ejs', { accounts: accounts });
         }
     });
 });
@@ -216,6 +229,26 @@ app.get('/admin-profile.ejs', function (request, response) {
             response.render('admin-profile.ejs', { accounts: accounts });
         }
     });
+});
+
+//<========================>
+//<====== user site =======>
+//<========================>
+
+app.get('/profile.html', function (request, response) {
+    response.sendFile(path.join(__dirname + '/views/profile.html'));
+});
+
+app.get('/recent-course.html', function (request, response) {
+    response.sendFile(path.join(__dirname + '/views/recent-course.html'));
+});
+
+app.get('/inactive-courses.html', function (request, response) {
+    response.sendFile(path.join(__dirname + '/views/inactive-courses.html'));
+});
+
+app.get('/completed-courses.html', function (request, response) {
+    response.sendFile(path.join(__dirname + '/views/completed-courses.html'));
 });
 
 //<========================>

@@ -9,7 +9,6 @@ var connection = mysql.createConnection({
 });
 
 module.exports = function (app) {
-
     // show all courses
     app.get('/courses', function (req, res) {
         connection.query('SELECT * FROM courses', function (error, results, fields) {
